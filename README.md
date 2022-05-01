@@ -11,7 +11,7 @@ and the Flutter guide for
 [developing packages and plugins](https://flutter.dev/developing-packages). 
 -->
 
-[WIP] STEP - Statically Typed Educational Programming Language
+[WIP] STEPS - Statically Typed Educational Programming System
 
 ## Features (Vision)
 
