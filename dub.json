@@ -1,0 +1,9 @@
+{
+	"authors": [
+		"Thomas Reiter"
+	],
+	"copyright": "Copyright © 2022, Thomas Reiter",
+	"description": "Safe and Statically Typed Educational Programming System",
+	"license": "GPL-3",
+	"name": "steps"
+}
