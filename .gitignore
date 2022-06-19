@@ -3,6 +3,7 @@ docs.json
 __dummy.html
 docs/
 /steps
+/build/
 steps.so
 steps.dylib
 steps.dll

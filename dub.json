@@ -1,9 +1,9 @@
 {
-	"authors": [
-		"Thomas Reiter"
-	],
-	"copyright": "Copyright © 2022, Thomas Reiter",
+	"name": "steps",
 	"description": "Safe and Statically Typed Educational Programming System",
-	"license": "GPL-3",
-	"name": "steps"
+	"authors": ["Thomas Reiter"],
+	"license": "GPL-3.0 or later",
+	"targetPath": "build/cmd",
+	"targetType": "executable"
 }
+
