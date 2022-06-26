@@ -1,9 +1,0 @@
-{
-	"name": "steps",
-	"description": "Safe and Statically Typed Educational Programming System",
-	"authors": ["Thomas Reiter"],
-	"license": "GPL-3.0 or later",
-	"targetPath": "build/cmd",
-	"targetType": "executable"
-}
-
