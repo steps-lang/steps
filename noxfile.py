@@ -79,3 +79,8 @@ def build_wheel(ctx: nox.Session) -> None:
     """Build a Pyodide package."""
     do_build_wheel(ctx)
 
+@nox.session
+def test(ctx: nox.Session) -> None:
+    """Run unit tests."""
+    ctx.install('pytest', 'pytest-cov', '.')
+    ctx.run('pytest')
