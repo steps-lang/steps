@@ -17,6 +17,7 @@ import nox
 STATIC_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'static'
 SITE_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'target' / 'site'
 DIST_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'target' / 'dist'
+TEST_REPORT_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'target' / 'test'
 
 def run_python_module(
         ctx: nox.Session,
@@ -46,6 +47,7 @@ def run_web(ctx: nox.Session) -> None:
     port: int = 8000
     directory: pathlib.Path = SITE_DIRECTORY
 
+    #run_python_module(ctx, 'http.server', '--directory', directory, port)
     httpd = multiprocessing.Process(
             target=run_python_module,
             args=(None, 'http.server', '--directory', directory, port),
@@ -57,7 +59,6 @@ def run_web(ctx: nox.Session) -> None:
         pass
     finally:
         httpd.join()
-    #run_python_module(ctx, 'http.server', '--directory', directory, port)
 
 @nox.session
 def build_web(ctx: nox.Session) -> None:
@@ -82,5 +83,17 @@ def build_wheel(ctx: nox.Session) -> None:
 @nox.session
 def test(ctx: nox.Session) -> None:
     """Run unit tests."""
-    ctx.install('pytest', 'pytest-cov', '.')
-    ctx.run('pytest')
+    TEST_REPORT_DIRECTORY.mkdir(exist_ok=True, parents=True)
+    ctx.install('pytest', 'pytest-cov', 'pytest-bdd', '.')
+
+    args = [ 
+            '--cov=steps',
+            '--cov-report=term',
+            f'--cov-report=html:{TEST_REPORT_DIRECTORY/"html"}',
+            f'--cov-report=xml:{TEST_REPORT_DIRECTORY}/coverage.xml',
+    ]
+    if ctx.posargs:
+        args += ctx.posargs
+
+    ctx.run('pytest', *args)
+

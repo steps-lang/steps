@@ -1,8 +1,15 @@
 """Lexical analysis for the STEPS language."""
 import typing
 
-from .token import Token, TokenKind, Tokenizer, TokenizerContext
+from .classes import is_eof
+from .token import Token, TokenKind, Tokenizer, TokenizerContext, TokenizerError, EXTRA_TOKENS
 from .states import tok_start as _tok_start
+
+def _next_char(source: typing.TextIO) -> str:
+    char: str = source.read(1)
+    if not char:
+        return '\x00'
+    return char
 
 
 def tokenize(source: typing.TextIO, start_state: Tokenizer = _tok_start) -> typing.Iterator[Token]:
@@ -19,26 +26,20 @@ def tokenize(source: typing.TextIO, start_state: Tokenizer = _tok_start) -> typi
     context: TokenizerContext = TokenizerContext()
     state: Tokenizer = start_state
     is_token_unfinished: bool = False
-
     try:
         while True:
-            char: str = source.read(1)
-            if not char:
-                char = '\x00'
+            char: str = _next_char(source)
             tokens, state = state(char, context)
             context.is_at_bof = False
-            is_token_unfinished = True
+            is_token_unfinished: bool = True
             for token in tokens:
-                if token:
+                is_token_unfinished = not bool(token)
+                if token and token.kind not in EXTRA_TOKENS:
                     yield token
-                    is_token_unfinished = False
-                else:
-                    is_token_unfinished = True
-
-            if is_eof(char):
+            if classes.is_eof(char):
+                if is_token_unfinished:
+                    raise TokenizerError(f'Unexpected end of file', context)
                 break
-        if is_token_unfinished:
-            raise TokenizerError(f'Unexpected end of file', context)
     except TokenizerError as err:
         err.state = state
         raise

@@ -59,3 +59,14 @@ def is_identifier_connector(char: str) -> bool:
     :return: true if the character is the connector part of an identifier
     """
     return unicodedata.category(char) == 'Pc'
+
+def is_symbolic(char: str) -> bool:
+    """
+    Return whether a character is considered to be symbolic
+
+    :param char: the character to be tested
+    :type char: str
+    :return: true if the character is the continue part of an identifier
+    """
+    return char in '!$%&()*+,-./:;<=>?@[\\]^{|}~'
+

@@ -10,49 +10,16 @@ from .token import Token, TokenKind, Tokenizer, TokenizerContext, TokenizerError
 
 
 KEYWORDS: typing.Sequence[str] = (
-        'and',
-        'as',
-        'assert',
-        'axiom',
-        'case',
-        'div',
-        'else',
-        'emit',
-        'enum',
-        'extends',
-        'finally',
-        'fn',
-        'forward',
-        'forwarder',
-        'from',
-        'given',
-        'if',
-        'import',
-        'in',
-        'inv',
-        'initially',
-        'lemma',
-        'let',
-        'mod',
-        'new',
-        'not',
-        'of',
-        'op',
-        'or',
-        'proc',
-        'pure',
-        'return',
-        'spawn',
-        'switch',
-        'theorem',
-        'then',
-        'type',
-        'var',
-        'variant',
-        'where',
-        'while',
-        'xor',
+        kind.value for kind in TokenKind if kind.name.startswith('KW_')
 )
+
+SYMBOLS: typing.Dict[str, TokenKind] = {
+        kind.value: kind  for kind in TokenKind
+            if not any(char.isalpha() for char in kind.value)
+}
+
+SYMBOL_LIST: typing.Sequence[str] = sorted(SYMBOLS.keys(), key=len, reverse=True)
+
 
 def check_keywords(term: str) -> 'TokenKind':
     """
@@ -85,6 +52,8 @@ def tok_start(char: str, context: TokenizerContext) -> TokenizerResult:
     """
     if classes.is_identifier_start(char) or char == '_':
         return tok_identifier(char, context)
+    if classes.is_symbolic(char):
+        return tok_symbolic(char, context)
     if classes.is_eol(char):
         return tok_eol(char, context)
     if char.isspace():
@@ -201,7 +170,9 @@ def tok_identifier_connector(char: str, context: TokenizerContext) -> TokenizerR
     if classes.is_identifier_connector(char):
         context.add_more(char)
         return ([], err_identifier)
-    return context.terminate_and_forward(check_keywords(context.more), char, tok_start)
+    if context.more == '_':
+        return context.terminate_and_forward(TokenKind.DUMMY_IDENTIFIER, char, tok_start)
+    return context.terminate_and_forward(TokenKind.ERR_IDENTIFIER, char, tok_start)
 
 def err_identifier(char: str, context: TokenizerContext) -> TokenizerResult:
     """
@@ -220,4 +191,48 @@ def err_identifier(char: str, context: TokenizerContext) -> TokenizerResult:
         context.add_more(char)
         return ([], err_identifier)
     return context.terminate_and_forward(TokenKind.ERR_IDENTIFIER, char, tok_start)
+
+def pop_symbolic(context: TokenizerContext) -> Token:
+    """
+    Assume that ``tok_symbolic`` pushed symbols into the buffer and extract the longest match.
+
+    :param context: the tokenizer context that holds the buffer
+    :type context: TokenizerContext
+    :return: the token constructed from the match
+    :rtype: Token
+    """
+    for symbol in SYMBOL_LIST:
+        if context.more.startswith(symbol):
+            symbol_length: int = len(symbol)
+            token_kind: TokenKind = SYMBOLS[symbol]
+            new_token: Token = Token(token_kind, symbol, context.more_line, context.more_column)
+            context.more = context.more[symbol_length:]
+            context.more_column += symbol_length
+            return new_token
+    raise TokenizerError(f'Unexpected character {symbol!r}', context)
+
+
+def tok_symbolic(char: str, context: TokenizerContext) -> TokenizerResult:
+    """
+    Scan punctiation and operators.
+
+    :param char: the next character to be read
+    :type char: str
+    :param context: the current tokenizer context
+    :type context: TokenizerContext
+    :return: the previously generated token if the current character terminates a token or ``None``
+        if no token has been generated plus the :py:type:`Tokenizer` representing the next state.
+    :rtype: TokenizerResult
+    :raise TokenizerError: if an unexpected character is encountered
+    """
+    if classes.is_symbolic(char):
+        context.add_more(char)
+        return ([], tok_symbolic)
+    tokens = []
+    while context.more:
+        new_token: Token = pop_symbolic(context)
+        tokens.append(new_token)
+    next_tokens, next_state = tok_start(char, context)
+    tokens += next_tokens
+    return (tokens, next_state)
 

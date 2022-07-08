@@ -6,55 +6,124 @@ import typing
 
 class TokenKind(enum.Enum):
     """Enumerates the allowed :py:class:`token <Token>` types."""
-    WHITE_SPACE = enum.auto()
-    END_OF_LINE = enum.auto()
-    IDENTIFIER = enum.auto()
-    DUMMY_IDENTIFIER = enum.auto()
-    KW_IF = enum.auto()
-    KW_AND = ENUM.AUTO()
-    KW_AS = ENUM.AUTO()
-    KW_ASSERT = ENUM.AUTO()
-    KW_AXIOM = ENUM.AUTO()
-    KW_CASE = ENUM.AUTO()
-    KW_DIV = ENUM.AUTO()
-    KW_ELSE = ENUM.AUTO()
-    KW_EMIT = ENUM.AUTO()
-    KW_ENUM = ENUM.AUTO()
-    KW_EXTENDS = ENUM.AUTO()
-    KW_FINALLY = ENUM.AUTO()
-    KW_FN = ENUM.AUTO()
-    KW_FORWARD = ENUM.AUTO()
-    KW_FORWARDER = ENUM.AUTO()
-    KW_FROM = ENUM.AUTO()
-    KW_GIVEN = ENUM.AUTO()
-    KW_IF = ENUM.AUTO()
-    KW_IMPORT = ENUM.AUTO()
-    KW_IN = ENUM.AUTO()
-    KW_INV = ENUM.AUTO()
-    KW_INITIALLY = ENUM.AUTO()
-    KW_LEMMA = ENUM.AUTO()
-    KW_LET = ENUM.AUTO()
-    KW_MOD = ENUM.AUTO()
-    KW_NEW = ENUM.AUTO()
-    KW_NOT = ENUM.AUTO()
-    KW_OF = ENUM.AUTO()
-    KW_OP = ENUM.AUTO()
-    KW_OR = ENUM.AUTO()
-    KW_PROC = ENUM.AUTO()
-    KW_PURE = ENUM.AUTO()
-    KW_RETURN = ENUM.AUTO()
-    KW_SPAWN = ENUM.AUTO()
-    KW_SWITCH = ENUM.AUTO()
-    KW_THEOREM = ENUM.AUTO()
-    KW_THEN = ENUM.AUTO()
-    KW_TYPE = ENUM.AUTO()
-    KW_VAR = ENUM.AUTO()
-    KW_VARIANT = ENUM.AUTO()
-    KW_WHERE = ENUM.AUTO()
-    KW_WHILE = ENUM.AUTO()
-    KW_XOR = ENUM.AUTO()
-    EOF = enum.auto()
-    ERR_IDENTIFIER = enum.auto()
+    WHITE_SPACE = '<WS>'
+    END_OF_LINE = '<EOL>'
+    IDENTIFIER = '<IDENTIFIER>'
+    DUMMY_IDENTIFIER = '<DUMMY IDENTIFIER>'
+    KW_AND = 'and'
+    KW_AS = 'as'
+    KW_ASSERT = 'assert'
+    KW_AXIOM = 'axiom'
+    KW_CASE = 'case'
+    KW_DIV = 'div'
+    KW_ELSE = 'else'
+    KW_EMIT = 'emit'
+    KW_ENUM = 'enum'
+    KW_EXTENDS = 'extends'
+    KW_FINALLY = 'finally'
+    KW_FN = 'fn'
+    KW_FORWARD = 'forward'
+    KW_FORWARDER = 'forwarder'
+    KW_FROM = 'from'
+    KW_GIVEN = 'given'
+    KW_IF = 'if'
+    KW_IMPORT = 'import'
+    KW_IN = 'in'
+    KW_INV = 'inv'
+    KW_INITIALLY = 'initially'
+    KW_LEMMA = 'lemma'
+    KW_LET = 'let'
+    KW_MOD = 'mod'
+    KW_NEW = 'new'
+    KW_NOT = 'not'
+    KW_OF = 'of'
+    KW_OP = 'op'
+    KW_OR = 'or'
+    KW_PROC = 'proc'
+    KW_PURE = 'pure'
+    KW_RETURN = 'return'
+    KW_SPAWN = 'spawn'
+    KW_SWITCH = 'switch'
+    KW_THEOREM = 'theorem'
+    KW_THEN = 'then'
+    KW_TYPE = 'type'
+    KW_VAR = 'var'
+    KW_VARIANT = 'variant'
+    KW_WHERE = 'where'
+    KW_WHILE = 'while'
+    KW_XOR = 'xor'
+    EOF = '<EOF>'
+    ERR_IDENTIFIER = 'ERROR <IDENTIFIER>'
+    LEFT_PARENTHESIS = '('
+    RIGHT_PARENTHESIS = ')'
+    LEFT_BRACKET = '['
+    RIGHT_BRACKET = ']'
+    LEFT_BRACE = '{'
+    RIGHT_BRACE = '}'
+    COMMA = ','
+    COLON = ':'
+    DOT = '.'
+    DOTDOT = '..'
+    ELLIPSIS = '...'
+    RIGHT_ARROW = '->'
+    RESERVED_SEMICOLON = ';'
+    RESERVED_COMMERCIAL_AT = '@'
+    RESERVED_EXCLAMATION_MARK = '!'
+    RESERVED_AMPERSAND = '&'
+    RESERVED_PERCENT = '%'
+    RESERVED_DOLLAR = '$'
+
+    OP_EQ = '='
+    OP_LT = '<'
+    OP_GT = '>'
+    OP_LEQ = '<='
+    OP_GEQ = '>='
+    OP_NEQ = '<>'
+    OP_ASSIGN = ':='
+    OP_CROSS = '><'
+    OP_PLUS = '+'
+    OP_MINUS = '-'
+    OP_MULTIPLY = '*'
+    OP_DIVIDE = '/'
+    OP_PLUS_ASSIGN = '+='
+    OP_MINUS_ASSIGN = '-='
+    OP_MULTIPLY_ASSIGN = '*='
+    OP_DIVIDE_ASSIGN = '/='
+    OP_EXPONENT = '^'
+
+    OP_CIRCLED_EQ = '(=)'
+    OP_CIRCLED_LT = '(<)'
+    OP_CIRCLED_GT = '(>)'
+    OP_CIRCLED_LEQ = '(<=)'
+    OP_CIRCLED_GEQ = '(>=)'
+    OP_CIRCLED_NEQ = '(<>)'
+    OP_CIRCLED_CROSS = '(><)'
+    OP_CIRCLED_PLUS = '(+)'
+    OP_CIRCLED_MINUS = '(-)'
+    OP_CIRCLED_MULTIPLY = '(*)'
+    OP_CIRCLED_DIVIDE = '(/)'
+    OP_CIRCLED_DOT = '(.)'
+
+    OP_BOXED_EQ = '[=]'
+    OP_BOXED_LT = '[<]'
+    OP_BOXED_GT = '[>]'
+    OP_BOXED_LEQ = '[<=]'
+    OP_BOXED_GEQ = '[>=]'
+    OP_BOXED_NEQ = '[<>]'
+    OP_BOXED_CROSS = '[><]'
+    OP_BOXED_PLUS = '[+]'
+    OP_BOXED_MINUS = '[-]'
+    OP_BOXED_MULTIPLY = '[*]'
+    OP_BOXED_DIVIDE = '[/]'
+    OP_BOXED_DOT = '[.]'
+
+    OP_PARENTHESES = '()'
+    OP_BRACKETS = '[]'
+    OP_BRACES = '{}'
+
+EXTRA_TOKENS: typing.Set[TokenKind] = {
+        TokenKind.WHITE_SPACE
+}
 
 @dataclasses.dataclass(frozen=True)
 class Token:
@@ -66,6 +135,7 @@ class Token:
     img: str
     line: int
     column: int
+    extra: typing.Sequence['Token'] = dataclasses.field(default_factory=list)
 
 
 @dataclasses.dataclass
