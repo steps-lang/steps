@@ -18,6 +18,7 @@ STATIC_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'static'
 SITE_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'target' / 'site'
 DIST_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'target' / 'dist'
 TEST_REPORT_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'target' / 'test'
+LINT_REPORT_DIRECTORY: pathlib.Path = pathlib.Path('.') / 'target' / 'lint'
 
 def run_python_module(
         ctx: nox.Session,
@@ -84,16 +85,38 @@ def build_wheel(ctx: nox.Session) -> None:
 def test(ctx: nox.Session) -> None:
     """Run unit tests."""
     TEST_REPORT_DIRECTORY.mkdir(exist_ok=True, parents=True)
-    ctx.install('pytest', 'pytest-cov', 'pytest-bdd', '.')
+    ctx.install(
+            'pytest',
+            'pytest-cov',
+            'pytest-bdd',
+            'pytest-html',
+            '.')
 
     args = [ 
             '--cov=steps',
             '--cov-report=term',
-            f'--cov-report=html:{TEST_REPORT_DIRECTORY/"html"}',
+            f'--cov-report=html:{TEST_REPORT_DIRECTORY/"cov-html"}',
             f'--cov-report=xml:{TEST_REPORT_DIRECTORY}/coverage.xml',
+            f'--html={TEST_REPORT_DIRECTORY/"html"/"index.html"}',
     ]
     if ctx.posargs:
         args += ctx.posargs
 
     ctx.run('pytest', *args)
+
+@nox.session
+def lint(ctx: nox.Session) -> None:
+    """Run multiple linters."""
+    LINT_REPORT_DIRECTORY.mkdir(exist_ok=True, parents=True)
+    ctx.install(
+            'pylama[all]',
+            )
+
+    args = [
+            '--report', f'{LINT_REPORT_DIRECTORY/"lint-report.json"}',
+    ]
+    if ctx.posargs:
+        args += ctx.posargs
+
+    ctx.run('pylama', *args)
 
